@@ -1,0 +1,13 @@
+name: RespawnBlocks
+version: '${project.version}'
+main: me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks
+api-version: 1.19
+authors: [ AFatCookie ]
+description: Will "regenerate" blocks, rather than breaking it!
+depend:
+  - Vault
+commands:
+  rb:
+    description: default command for RespawnBlocks
+    permission: respawnblocks.admin
+    permission-message: Insufficient Permission
