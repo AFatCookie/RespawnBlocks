@@ -23,7 +23,7 @@ public class RespawnBlock {
 
     private final World world;
     //the block's initial material before changing
-    private final Material initialBlockMaterial;
+    private  Material initialBlockMaterial;
 
 
     public RespawnBlock(int xCoord, int yCoord, int zCoord, RespawnBlocks respawnBlocksInstance, String initalMaterial, String world){
@@ -93,5 +93,9 @@ public class RespawnBlock {
 
     public World getWorld() {
         return world;
+    }
+
+    public void setInitialBlockMaterial(Material initialBlockMaterial) {
+        this.initialBlockMaterial = initialBlockMaterial;
     }
 }

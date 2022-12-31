@@ -3,10 +3,7 @@ package me.afatcookie.respawnblocks.respawnblocks;
 import me.afatcookie.respawnblocks.respawnblocks.DB.Database;
 import me.afatcookie.respawnblocks.respawnblocks.DB.SQLite;
 import me.afatcookie.respawnblocks.respawnblocks.files.DataConfig;
-import me.afatcookie.respawnblocks.respawnblocks.listeners.BlockBreakListener;
-import me.afatcookie.respawnblocks.respawnblocks.listeners.ClickListener;
-import me.afatcookie.respawnblocks.respawnblocks.listeners.CommandListener;
-import me.afatcookie.respawnblocks.respawnblocks.listeners.GUIListener;
+import me.afatcookie.respawnblocks.respawnblocks.listeners.*;
 import me.afatcookie.respawnblocks.respawnblocks.timing.TimerManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,6 +62,7 @@ public final class RespawnBlocks extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new ClickListener(this), this);
+        getServer().getPluginManager().registerEvents(new ExplosionEvent(this), this);
     }
 
     public  DataConfig getDataConfig() {

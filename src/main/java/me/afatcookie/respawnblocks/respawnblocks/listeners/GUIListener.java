@@ -1,11 +1,15 @@
 package me.afatcookie.respawnblocks.respawnblocks.listeners;
 
+import me.afatcookie.respawnblocks.respawnblocks.guis.BlockManagementGUI;
 import me.afatcookie.respawnblocks.respawnblocks.guis.GUI;
+import me.afatcookie.respawnblocks.respawnblocks.guis.RbBlocksDisplayGUI;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 
 public class GUIListener implements Listener {
 
@@ -17,9 +21,22 @@ public class GUIListener implements Listener {
         if (e.getCurrentItem() == null){
             return;
         }
+        if (e.getClickedInventory() == null) return;
         final GUI getGUI = (GUI) e.getInventory().getHolder();
+    if (e.getCurrentItem().getType() == Material.AIR || e.getCurrentItem() == null || e.getCurrentItem().getType().toString().contains("PANE")){
         e.setCancelled(true);
-        getGUI.onClick((Player) e.getWhoClicked(), e.getInventory(), e.getCurrentItem(), e.getClick(), e.getSlot());
+        }
+
+    if (getGUI instanceof RbBlocksDisplayGUI){
+        e.setCancelled(true);
+    }
+    if (getGUI instanceof BlockManagementGUI){
+        if (e.getClickedInventory().toString().contains("Custom")){
+        e.setCancelled(true);
+            }
+    }
+        getGUI.onClick((Player) e.getWhoClicked(), e.getInventory(), e.getCurrentItem(), e.getClick(), e.getSlot(),
+                e.getCursor());
     }
 
     @EventHandler
