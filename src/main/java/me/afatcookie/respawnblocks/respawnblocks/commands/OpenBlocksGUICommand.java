@@ -1,6 +1,6 @@
 package me.afatcookie.respawnblocks.respawnblocks.commands;
 
-import me.afatcookie.respawnblocks.respawnblocks.guis.blocksDisplayGUI;
+import me.afatcookie.respawnblocks.respawnblocks.guis.BlockDisplayGUI;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +28,7 @@ public class OpenBlocksGUICommand extends CommandBuilder{
         if (!(commandSender instanceof Player)) return;
         Player player = (Player) commandSender;
         if (args.length > 0) {
-            player.openInventory(new blocksDisplayGUI(instance).getInventory());
+            player.openInventory(new BlockDisplayGUI(instance).getInventory());
         }
     }
 }

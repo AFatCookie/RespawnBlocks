@@ -26,7 +26,7 @@ public class InventoryBuilder {
     /**
      * default constructor; can be used when creating inventories, but usually will only work with config inventories
      */
-    private InventoryBuilder() {
+    public InventoryBuilder() {
     }
 
     /**

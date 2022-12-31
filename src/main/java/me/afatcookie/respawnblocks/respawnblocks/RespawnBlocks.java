@@ -20,6 +20,8 @@ public final class RespawnBlocks extends JavaPlugin {
 
     private Database database;
 
+
+
     private TimerManager tm;
 
     @Override
