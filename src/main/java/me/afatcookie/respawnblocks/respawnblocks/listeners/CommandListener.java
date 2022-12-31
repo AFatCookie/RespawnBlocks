@@ -21,6 +21,7 @@ public class CommandListener implements CommandExecutor {
         commandsArrayList.add(new ReloadConfigCommand());
         commandsArrayList.add(new ClearAllBlocksCommand());
         commandsArrayList.add(new HelpCommand());
+        commandsArrayList.add(new CreateRegionRespawnBlocksCommand());
 
     }
 

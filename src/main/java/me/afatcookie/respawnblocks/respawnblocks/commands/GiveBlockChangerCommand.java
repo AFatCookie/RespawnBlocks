@@ -17,7 +17,7 @@ public class GiveBlockChangerCommand extends CommandBuilder{
 
     @Override
     public String getDescription() {
-        return "Gives the player a wand which can be used to create/remove respawnable blocks.";
+        return "Gives the player a wand which can be used to create respawnable blocks.";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class GiveBlockChangerCommand extends CommandBuilder{
         Player player = (Player) commandSender;
         if (args.length > 0) {
             player.getInventory().addItem(new ItemCreator(Material.BLAZE_ROD, 1).setDisplayName("&6RB&r &6&nWand").addGlow(true).addLoreLine(
-                    "&6This wand can set/take away a blocks ability to respawn after the desired time").addLoreLine("&4RB ADMIN WAND")
+                    "&6This wand is used to set points to make respawn blocks in mass fashion!").addLoreLine("&4RB ADMIN WAND")
                     .setPDCString(new NamespacedKey(instance, "wand"), "rbwand").getItemStack());
         }
     }

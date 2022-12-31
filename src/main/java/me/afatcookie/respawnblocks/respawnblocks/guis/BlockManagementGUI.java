@@ -64,6 +64,11 @@ public class BlockManagementGUI implements GUI{
         player.closeInventory();
             }
         }
+        if (clickedItem.getType() == Material.BARRIER){
+            instance.getRBManager().getRespawnBlocksList().remove(block);
+            player.closeInventory();
+            player.sendMessage(ChatColor.GOLD + "Removed this Respawn Block!");
+        }
     }
 
     @Override
@@ -78,7 +83,9 @@ public class BlockManagementGUI implements GUI{
                 .setSlot(31, new ItemCreator(Material.ENDER_PEARL, 1).setDisplayName("&3Teleport to Block").setLore("&7Teleport to this Block!",
                         "&6NOTE",
                         "&7If there is no open space around the block", "&7where the block is visible",
-                        "&7it will not teleport you!").getItemStack()).build();
+                        "&7it will not teleport you!").getItemStack()).setSlot(32, new ItemCreator(
+                                Material.BARRIER, 1
+                ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).build();
         return inventory;
     }
 

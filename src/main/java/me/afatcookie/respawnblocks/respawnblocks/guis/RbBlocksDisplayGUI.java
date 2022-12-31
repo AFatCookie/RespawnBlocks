@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class RbBlocksDisplayGUI extends PaginatedMenu{
 
@@ -72,24 +73,25 @@ public class RbBlocksDisplayGUI extends PaginatedMenu{
     public Inventory getInventory() {
         design();
         ArrayList<RespawnBlock> blocks = new ArrayList<>(instance.getRBManager().getRespawnBlocksList());
+        blocks.sort((a,b) -> a.getInitialBlockType().toString().compareToIgnoreCase(b.getInitialBlockType().toString()));
         if (!blocks.isEmpty()){
       for (int i = 0; i < super.maxPageItems; i++) {
         index = super.maxPageItems * this.page + i;
         if (index >= blocks.size()) break;
         if (blocks.get(index) != null){
-            inv.addItem(new ItemCreator(
-                    instance.getRBManager().getRespawnBlocksList().get(index).getInitialBlockType(), 1) .addGlow(true)
+            inv.setItem(inv.firstEmpty(), new ItemCreator(
+                    blocks.get(index).getInitialBlockType(), 1) .addGlow(true)
                     .addLoreLine("&cClick here to teleport to this Block!") .addLoreLine( "&6X-Coordinate: " +
-                            instance.getRBManager().getRespawnBlocksList().get(index).getxCoord()) .addLoreLine(
+                            blocks.get(index).getxCoord()) .addLoreLine(
                             "&6Y-Coordinate: " + instance.getRBManager().getRespawnBlocksList().get(index).getyCoord())
                     .addLoreLine( "&6Z-Coordinate: " +
-                            instance.getRBManager().getRespawnBlocksList().get(index).getzCoord()) .setPDCInteger( new
+                            blocks.get(index).getzCoord()) .setPDCInteger( new
                                     NamespacedKey(instance, "xcoord"),
-                            instance.getRBManager().getRespawnBlocksList().get(index).getxCoord()) .setPDCInteger( new
+                            blocks.get(index).getxCoord()) .setPDCInteger( new
                                     NamespacedKey(instance, "ycoord"),
-                            instance.getRBManager().getRespawnBlocksList().get(index).getyCoord()) .setPDCInteger( new
+                            blocks.get(index).getyCoord()) .setPDCInteger( new
                                     NamespacedKey(instance, "zcoord"),
-                            instance.getRBManager().getRespawnBlocksList().get(index).getzCoord()) .getItemStack());
+                            blocks.get(index).getzCoord()) .getItemStack());
         }
       }
         }

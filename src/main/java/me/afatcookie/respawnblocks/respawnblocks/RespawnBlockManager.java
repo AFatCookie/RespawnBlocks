@@ -3,7 +3,6 @@ package me.afatcookie.respawnblocks.respawnblocks;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 /*
@@ -17,6 +16,10 @@ public class RespawnBlockManager {
     private final RespawnBlocks instance;
 
     private int initalBlockID;
+
+    private Block block1;
+
+    private Block block2;
 
     public RespawnBlockManager(RespawnBlocks instance){
         respawnBlocks = new ArrayList<>();
@@ -93,5 +96,21 @@ public class RespawnBlockManager {
 
     public void setInitalBlockID(int newBlockID){
         initalBlockID = newBlockID;
+    }
+
+    public Block getBlock1() {
+        return block1;
+    }
+
+    public void setBlock1(Block block1) {
+        this.block1 = block1;
+    }
+
+    public Block getBlock2() {
+        return block2;
+    }
+
+    public void setBlock2(Block block2) {
+        this.block2 = block2;
     }
 }
