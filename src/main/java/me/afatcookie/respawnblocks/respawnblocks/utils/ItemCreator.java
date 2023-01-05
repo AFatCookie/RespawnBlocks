@@ -112,7 +112,7 @@ public class ItemCreator {
     }
 
     /**
-     * To avoid deprecation, this method sets the durability by subtracting the items max durability by the parametrized amount.
+     * To avoid deprecation, this method sets the durability by subtracting the items max durability by the current damage it has + the parameterized amount.
      * NOTE: this method will only work if the item *HAS* durability, ex: (Tools, Bows, Armor) are all things that have durability.
      * NOTE: if the item doesn't have durability, this method will do nothing
      * @param durability the amount of durability loss the item should have on creation.

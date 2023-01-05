@@ -6,9 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
@@ -37,8 +40,23 @@ public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
                 return;
             }
             List<Block> blocks = getBlocks(instance.getRBManager().getBlock1().getLocation(), instance.getRBManager().getBlock2().getLocation());
+            if (blocks == null || blocks.isEmpty()){
+                player.sendMessage(ChatColor.RED + "Failed to create RespawnBlocks within the two points provided.");
+                return;
+            }
       for (Block block : blocks) {
         if (instance.getRBManager().getRespawnBlock(block) == null) {
+            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString()) == null){
+                instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString(), new HashMap<>());
+                ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString());
+                if (section != null) {
+                    MemorySection.createPath(section, "cooldown-time");
+                    MemorySection.createPath(section, "cooldown-block-material");
+                    section.set("cooldown-time", 10);
+                    section.set("cooldown-block-material", "COBBLESTONE");
+                }
+                instance.getDataConfig().save();
+            }
           RespawnBlock respawnBlock =
               new RespawnBlock(
                   block.getX(),

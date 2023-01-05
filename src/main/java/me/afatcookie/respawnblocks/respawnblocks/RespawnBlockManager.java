@@ -34,6 +34,12 @@ public class RespawnBlockManager {
 
 
     public void clearBlocks(){
+        for (RespawnBlock respawnBlock : respawnBlocks){
+            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + respawnBlock.getInitialBlockType().toString()) != null){
+                instance.getDataConfig().getConfig().set(instance.getDataConfig().getRBSection() + "." + respawnBlock.getInitialBlockType().toString(), null);
+                instance.getDataConfig().save();
+            }
+        }
         respawnBlocks.clear();
     }
 

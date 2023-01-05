@@ -23,11 +23,11 @@ public class ClearAllBlocksCommand extends CommandBuilder{
     @Override
     public void execute(CommandSender commandSender, String[] args) {
         if (!(commandSender instanceof Player)) return;
-        Player player = (Player) commandSender;
         if (args.length > 0) {
       for (RespawnBlock rb : instance.getRBManager().getRespawnBlocksList()) {
         if (instance.getTm().isInCoolDown(rb)) {
           rb.getWorld().getBlockAt(rb.getxCoord(), rb.getyCoord(), rb.getzCoord()).setType(rb.getInitialBlockType());
+          instance.getTm().getCoolDownList().remove(rb);
         }
             }
       instance.getRBManager().clearBlocks();

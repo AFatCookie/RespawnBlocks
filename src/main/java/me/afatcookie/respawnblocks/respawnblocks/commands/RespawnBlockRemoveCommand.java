@@ -6,6 +6,7 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 /*
 Command that will stop the block from respawning continuously.
  */
@@ -40,6 +41,10 @@ public class RespawnBlockRemoveCommand extends CommandBuilder {
            targetBlock.setType(respawnBlock.getInitialBlockType());
          }
       instance.getRBManager().getRespawnBlocksList().remove(instance.getRBManager().getRespawnBlock(targetBlock));
+      if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString()) != null){
+        instance.getDataConfig().getConfig().set(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), null);
+        instance.getDataConfig().save();
+      }
            player.sendMessage(ChatColor.GREEN + "Successfully removed from respawnable blocks!");
 
       }

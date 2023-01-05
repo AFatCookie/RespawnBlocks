@@ -21,10 +21,7 @@ public class Timer extends BukkitRunnable {
         this.respawnBlock = respawnBlockConstructor;
         this.instance = respawnBlocksInstance;
         rbManager = instance.getRBManager();
-        if (instance.getDataConfig().getConfig().getInt("block-cooldown-time") <= 0){
-            time = 5;
-        }
-        time = instance.getDataConfig().getConfig().getInt("block-cooldown-time");
+        this.time = respawnBlockConstructor.getCooldownTime();
     }
 
     //Runs every second, checking if It's time to set the block back to its original form. Will remove it from cooldown automatically.
