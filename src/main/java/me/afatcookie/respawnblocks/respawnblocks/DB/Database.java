@@ -103,9 +103,9 @@ public abstract class Database {
             conn = getSQLConnection();
             ps = conn.prepareStatement(SAVE_INTO_TABLE.replace("{table_name}", "activeblocks"));
             ps.setInt(1, respawnBlock.getBlockID());
-            ps.setInt(2, respawnBlock.getxCoord());
-            ps.setInt(3, respawnBlock.getyCoord());
-            ps.setInt(4, respawnBlock.getzCoord());
+            ps.setInt(2, respawnBlock.getX());
+            ps.setInt(3, respawnBlock.getY());
+            ps.setInt(4, respawnBlock.getZ());
             ps.setString(5, respawnBlock.getInitialBlockType().toString());
             ps.setString(6, respawnBlock.getWorld().getName());
             ps.execute();

@@ -44,7 +44,7 @@ public class ClickListener implements Listener {
 
     if (action.equals(Action.LEFT_CLICK_BLOCK)){
         instance.getRBManager().setBlock1(targetBlock);
-        player.sendMessage(ChatColor.GOLD + "Set block 1!");;
+        player.sendMessage(ChatColor.GOLD + "Set block 1!");
     } else if(action.equals(Action.RIGHT_CLICK_BLOCK)) {
         instance.getRBManager().setBlock2(targetBlock);
         player.sendMessage(ChatColor.GOLD + "Set block 2!");

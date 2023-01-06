@@ -53,6 +53,7 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
                 instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), new HashMap<>());
                 ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString());
                 if (section != null) {
+                    System.out.println("not null");
                     MemorySection.createPath(section, "cooldown-time");
                     MemorySection.createPath(section, "cooldown-block-material");
                     section.set("cooldown-time", 10);
@@ -62,9 +63,7 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
             }
       RespawnBlock respawnBlock =
           new RespawnBlock(
-              targetBlock.getX(),
-              targetBlock.getY(),
-              targetBlock.getZ(),
+                  targetBlock.getLocation(),
               instance, targetBlock.getType().toString(),
               targetBlock.getWorld().getName());
           instance.getRBManager().getRespawnBlocksList().add(respawnBlock);

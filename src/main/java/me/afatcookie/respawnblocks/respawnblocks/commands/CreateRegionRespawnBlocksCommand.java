@@ -59,9 +59,7 @@ public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
             }
           RespawnBlock respawnBlock =
               new RespawnBlock(
-                  block.getX(),
-                  block.getY(),
-                  block.getZ(),
+                      block.getLocation(),
                   instance,
                   block.getType().toString(),
                   block.getWorld().getName());

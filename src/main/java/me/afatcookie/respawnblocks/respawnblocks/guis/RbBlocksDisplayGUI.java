@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class RbBlocksDisplayGUI extends PaginatedMenu{
 
@@ -82,16 +81,16 @@ public class RbBlocksDisplayGUI extends PaginatedMenu{
             inv.setItem(inv.firstEmpty(), new ItemCreator(
                     blocks.get(index).getInitialBlockType(), 1) .addGlow(true)
                     .addLoreLine("&cClick here to teleport to this Block!") .addLoreLine( "&6X-Coordinate: " +
-                            blocks.get(index).getxCoord()) .addLoreLine(
-                            "&6Y-Coordinate: " + instance.getRBManager().getRespawnBlocksList().get(index).getyCoord())
+                            blocks.get(index).getX()) .addLoreLine(
+                            "&6Y-Coordinate: " + instance.getRBManager().getRespawnBlocksList().get(index).getY())
                     .addLoreLine( "&6Z-Coordinate: " +
-                            blocks.get(index).getzCoord()) .setPDCInteger( new
+                            blocks.get(index).getZ()) .setPDCInteger( new
                                     NamespacedKey(instance, "xcoord"),
-                            blocks.get(index).getxCoord()) .setPDCInteger( new
+                            blocks.get(index).getX()) .setPDCInteger( new
                                     NamespacedKey(instance, "ycoord"),
-                            blocks.get(index).getyCoord()) .setPDCInteger( new
+                            blocks.get(index).getY()) .setPDCInteger( new
                                     NamespacedKey(instance, "zcoord"),
-                            blocks.get(index).getzCoord()) .getItemStack());
+                            blocks.get(index).getZ()) .getItemStack());
         }
       }
         }

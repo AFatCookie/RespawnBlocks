@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /*
 Manager for respawn blocks
@@ -34,12 +35,9 @@ public class RespawnBlockManager {
 
 
     public void clearBlocks(){
-        for (RespawnBlock respawnBlock : respawnBlocks){
-            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + respawnBlock.getInitialBlockType().toString()) != null){
-                instance.getDataConfig().getConfig().set(instance.getDataConfig().getRBSection() + "." + respawnBlock.getInitialBlockType().toString(), null);
-                instance.getDataConfig().save();
-            }
-        }
+        instance.getDataConfig().getConfig().set("respawnblocks", new HashMap<>());
+        instance.getDataConfig().save();
+        instance.getDataConfig().reload();
         respawnBlocks.clear();
     }
 
@@ -53,13 +51,13 @@ public class RespawnBlockManager {
       if (respawnBlock.getBlock().getType() != block.getType()) {
         continue;
                 }
-            if (respawnBlock.getxCoord() != block.getLocation().getX()){
+            if (respawnBlock.getX() != block.getLocation().getX()){
                 continue;
             }
-            if (respawnBlock.getyCoord() != block.getLocation().getY()) {
+            if (respawnBlock.getY() != block.getLocation().getY()) {
                 continue;
             }
-            if (respawnBlock.getzCoord() != block.getZ()) {
+            if (respawnBlock.getZ() != block.getZ()) {
                 continue;
             }
             return respawnBlock;

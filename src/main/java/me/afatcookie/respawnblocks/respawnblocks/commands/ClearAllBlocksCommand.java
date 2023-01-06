@@ -26,7 +26,7 @@ public class ClearAllBlocksCommand extends CommandBuilder{
         if (args.length > 0) {
       for (RespawnBlock rb : instance.getRBManager().getRespawnBlocksList()) {
         if (instance.getTm().isInCoolDown(rb)) {
-          rb.getWorld().getBlockAt(rb.getxCoord(), rb.getyCoord(), rb.getzCoord()).setType(rb.getInitialBlockType());
+          rb.getWorld().getBlockAt(rb.getX(), rb.getY(), rb.getZ()).setType(rb.getInitialBlockType());
           instance.getTm().getCoolDownList().remove(rb);
         }
             }
