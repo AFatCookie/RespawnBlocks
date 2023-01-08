@@ -1,6 +1,6 @@
 package me.afatcookie.respawnblocks.respawnblocks.commands;
 
-import me.afatcookie.respawnblocks.respawnblocks.RespawnBlock;
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.block.Block;
@@ -53,7 +53,6 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
                 instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), new HashMap<>());
                 ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString());
                 if (section != null) {
-                    System.out.println("not null");
                     MemorySection.createPath(section, "cooldown-time");
                     MemorySection.createPath(section, "cooldown-block-material");
                     section.set("cooldown-time", 10);

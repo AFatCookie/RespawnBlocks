@@ -2,6 +2,7 @@ package me.afatcookie.respawnblocks.respawnblocks;
 
 import me.afatcookie.respawnblocks.respawnblocks.DB.Database;
 import me.afatcookie.respawnblocks.respawnblocks.DB.SQLite;
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlockManager;
 import me.afatcookie.respawnblocks.respawnblocks.files.DataConfig;
 import me.afatcookie.respawnblocks.respawnblocks.listeners.*;
 import me.afatcookie.respawnblocks.respawnblocks.timing.TimerManager;
@@ -30,6 +31,7 @@ public final class RespawnBlocks extends JavaPlugin {
         database = new SQLite(instance);
         database.createBlockIDTable();
         database.createActiveBlocksTable();
+        database.createRewardTable();
         dataConfig = new DataConfig(instance);
         rbManager = new RespawnBlockManager(instance);
         tm = new TimerManager(instance);
@@ -74,6 +76,7 @@ public final class RespawnBlocks extends JavaPlugin {
     }
 
     private void registerCommands(){
-        CommandListener.commandList(this);
+        CommandListener.register(this, "rb");
+        TabComplete.register(this, "rb");
     }
 }

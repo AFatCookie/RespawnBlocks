@@ -1,13 +1,16 @@
-package me.afatcookie.respawnblocks.respawnblocks;
+package me.afatcookie.respawnblocks.respawnblocks.block;
 
+import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -34,6 +37,8 @@ public class RespawnBlock {
     //the block's initial material before changing
     private  String initialBlockMaterial;
 
+    private  ArrayList<Reward> rewards;
+
 
     /**
      * Creates a Respawnable Block using the parameterized data.
@@ -52,6 +57,7 @@ public class RespawnBlock {
         initialBlockMaterial = initalMaterial;
         loadSettingsFromConfig(instance.getDataConfig().getRBSection() + "." + this.initialBlockMaterial);
         this.blockID = respawnBlocksInstance.getRBManager().getInitalBlockID();
+        loadRewards();
         instance.getRBManager().setInitalBlockID(instance.getRBManager().getInitalBlockID() + 1);
     }
 
@@ -75,6 +81,7 @@ public class RespawnBlock {
         this.block = this.world.getBlockAt(xCoord, yCoord, zCoord);
         this.initialBlockMaterial = initialBlockMaterial;
         loadSettingsFromConfig(instance.getDataConfig().getRBSection() + "." + this.initialBlockMaterial);
+        loadRewards();
         instance.getRBManager().setInitalBlockID(instance.getRBManager().getInitalBlockID() + 1);
     }
 
@@ -125,34 +132,6 @@ public class RespawnBlock {
     public void setCooldownTime(int cooldownTime) {
         this.cooldownTime = cooldownTime;
     }
-
-    /**
-     * for respawnblocks, it will get the cooldown time and cooldown material for the block from the data config.
-     * @param path the path to check for the respawnBlock.
-     */
-    private void restoreRBSettingsViaConfig(String path){
-        if (instance.getDataConfig().getConfig().getConfigurationSection(path) == null) {
-            instance.getDataConfig().getConfig().createSection(path, new HashMap<>());
-        }
-        ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(path);
-        if (section != null) {
-            if (instance.getDataConfig().getConfig().get(path + "." + "cooldown-time") == null) {
-                MemorySection.createPath(section, "cooldown-time");
-                section.set("cooldown-time", instance.getDataConfig().getDefaultCooldown());
-                this.cooldownTime = instance.getDataConfig().getDefaultCooldown();
-            } else {
-                this.cooldownTime = instance.getDataConfig().getConfig().getInt(path + "." + "cooldown-time");
-            }
-            if (instance.getDataConfig().getConfig().getString(path + "." + "cooldown-block-material") == null) {
-                MemorySection.createPath(section, "cooldown-block-material");
-                section.set("cooldown-block-material", instance.getDataConfig().getDefaultCooldownMaterial().toString());
-                this.cooldownMaterial = instance.getDataConfig().getDefaultCooldownMaterial();
-            } else {
-                this.cooldownMaterial = Material.getMaterial(instance.getDataConfig().getConfig().getString(path+ "." + "cooldown-block-material"));
-            }
-            instance.getDataConfig().save();
-        }
-    }
     /**
      * Loads the block's settings from the configuration file.
      *
@@ -182,4 +161,30 @@ public class RespawnBlock {
         instance.getDataConfig().save();
     }
 
+    private void loadRewards(){
+        rewards = new ArrayList<>();
+        if (block.getDrops().stream().findFirst().isPresent()){
+            rewards.add(new Reward(blockID, block.getDrops().stream().findFirst().get()));
+        }else{
+            rewards.add(new Reward(blockID, new ItemStack(block.getType(), 1)));
+        }
+        }
+
+    public void dropRewards(Player player){
+        for (Reward reward: rewards) {
+            player.getWorld().dropItemNaturally(block.getLocation(), reward.getItem());
+        }
+    }
+
+    public void addToRewards(ItemStack itemStack){
+        rewards.add(new Reward(blockID, itemStack));
+    }
+
+    public void setRewards(ArrayList<Reward> rewards) {
+        this.rewards = rewards;
+    }
+
+    public ArrayList<Reward> getRewards() {
+        return rewards;
+    }
 }

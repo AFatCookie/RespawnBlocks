@@ -1,7 +1,8 @@
 package me.afatcookie.respawnblocks.respawnblocks.guis;
 
-import me.afatcookie.respawnblocks.respawnblocks.RespawnBlock;
 import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
+import me.afatcookie.respawnblocks.respawnblocks.block.Reward;
 import me.afatcookie.respawnblocks.respawnblocks.utils.ItemCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,61 +14,60 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 
-public class BlockManagementGUI implements GUI{
+
+public class BlockManagementGUI implements GUI {
 
     Inventory inventory;
-
     ItemStack blockClicked;
-
     RespawnBlocks instance;
-
     RespawnBlock block;
 
-    public BlockManagementGUI(ItemStack clickedItem, RespawnBlocks instance, Player player){
-        this.blockClicked = clickedItem;
+    public BlockManagementGUI(ItemStack clickedItem, RespawnBlocks instance, Player player) {
         this.instance = instance;
-        int x =
-                blockClicked
-                        .getItemMeta()
-                        .getPersistentDataContainer()
-                        .get(new NamespacedKey(instance, "xcoord"), PersistentDataType.INTEGER);
-        int y =
-                blockClicked
-                        .getItemMeta()
-                        .getPersistentDataContainer()
-                        .get(new NamespacedKey(instance, "ycoord"), PersistentDataType.INTEGER);
-        int z =
-                blockClicked
-                        .getItemMeta()
-                        .getPersistentDataContainer()
-                        .get(new NamespacedKey(instance, "zcoord"), PersistentDataType.INTEGER);
-        block = instance.getRBManager().getRespawnBlock(player.getWorld().getBlockAt(x,y,z));
+        PersistentDataContainer pdc = clickedItem.getItemMeta().getPersistentDataContainer();
+        int x = pdc.get(new NamespacedKey(instance, "xcoord"), PersistentDataType.INTEGER);
+        int y = pdc.get(new NamespacedKey(instance, "ycoord"), PersistentDataType.INTEGER);
+        int z = pdc.get(new NamespacedKey(instance, "zcoord"), PersistentDataType.INTEGER);
+        block = instance.getRBManager().getRespawnBlock(player.getWorld().getBlockAt(x, y, z));
+        this.blockClicked = new ItemCreator(clickedItem)
+                .setDisplayName("BlockID: " + block.getBlockID())
+                .getItemStack();
     }
+
     @Override
     public void onClick(Player player, Inventory inventory, ItemStack clickedItem, ClickType clickType, int slot, ItemStack cursor) {
-        if (clickedItem.getType() == Material.ENDER_PEARL){
-      findSafeTPSpace(block.getBlock(), player);
+        if (clickedItem.getType() == Material.ENDER_PEARL) {
+            findSafeTPSpace(block.getBlock(), player);
         }
         if (clickedItem.isSimilar(blockClicked) && clickedItem.hasItemMeta() && blockClicked.hasItemMeta()){
             if (!cursor.getType().isBlock() || cursor.getType() == Material.AIR){
                 player.sendMessage("This item cannot be a block!");
       } else {
-
-            block.setInitialBlockMaterial(cursor.getType());
-        block.getBlock()
-            .setType(cursor.getType());
+                for (Reward reward : block.getRewards()){
+                    if (reward.getItem().getType() == block.getBlock().getType()){
+                        reward.setItem(new ItemStack(cursor.getType(), 1));
+                        break;
+                    }
+                }
+                block.setInitialBlockMaterial(cursor.getType());
+                block.getBlock().setType(cursor.getType());
                 player.sendMessage(ChatColor.GOLD + "Changed this block type to:" + ChatColor.WHITE + " " + ChatColor.BOLD + cursor.getType());
         player.closeInventory();
             }
         }
         if (clickedItem.getType() == Material.BARRIER){
             instance.getRBManager().getRespawnBlocksList().remove(block);
+            block.getBlock().setType(clickedItem.getType());
             player.closeInventory();
             player.sendMessage(ChatColor.GOLD + "Removed this Respawn Block!");
+        }
+        if (clickedItem.getType() == Material.BOOK){
+            player.openInventory(new BlockRewardsGUI(block, instance, 0).getInventory());
         }
     }
 
@@ -85,9 +85,14 @@ public class BlockManagementGUI implements GUI{
                         "&7If there is no open space around the block", "&7where the block is visible",
                         "&7it will not teleport you!").getItemStack()).setSlot(32, new ItemCreator(
                                 Material.BARRIER, 1
-                ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).build();
+                ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).setSlot(33,
+                        new ItemCreator(Material.BOOK, 1).setDisplayName("&5Rewards").setLore("See the rewards this block drops").getItemStack()).build();
         return inventory;
     }
+
+
+
+
 
     private void findSafeTPSpace(Block start, Player player) {
         ArrayList<BlockFace> bf = new ArrayList<>();
@@ -120,4 +125,7 @@ public class BlockManagementGUI implements GUI{
     private boolean checkBottomY(Block block){
         return block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ()).getType() == Material.AIR;
     }
+
+
 }
+

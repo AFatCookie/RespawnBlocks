@@ -1,6 +1,6 @@
 package me.afatcookie.respawnblocks.respawnblocks.commands;
 
-import me.afatcookie.respawnblocks.respawnblocks.RespawnBlock;
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;

@@ -1,6 +1,7 @@
 package me.afatcookie.respawnblocks.respawnblocks.listeners;
 
 import me.afatcookie.respawnblocks.respawnblocks.guis.BlockManagementGUI;
+import me.afatcookie.respawnblocks.respawnblocks.guis.BlockRewardsGUI;
 import me.afatcookie.respawnblocks.respawnblocks.guis.GUI;
 import me.afatcookie.respawnblocks.respawnblocks.guis.RbBlocksDisplayGUI;
 import org.bukkit.Material;
@@ -29,10 +30,11 @@ public class GUIListener implements Listener {
     if (getGUI instanceof RbBlocksDisplayGUI){
         e.setCancelled(true);
     }
-    if (getGUI instanceof BlockManagementGUI){
+    if (getGUI instanceof BlockManagementGUI || getGUI instanceof BlockRewardsGUI){
         if (e.getClickedInventory().toString().contains("Custom")){
         e.setCancelled(true);
             }
+
     }
         getGUI.onClick((Player) e.getWhoClicked(), e.getInventory(), e.getCurrentItem(), e.getClick(), e.getSlot(),
                 e.getCursor());

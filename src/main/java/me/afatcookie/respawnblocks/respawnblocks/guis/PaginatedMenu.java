@@ -14,9 +14,9 @@ public abstract class PaginatedMenu implements GUI {
 
     protected int index = 0;
 
-    public void design(){
-       inv = new InventoryBuilder("&2Blocks", 54, this).fillBottom("WHITE", 6).fillSides("WHITE", 54).fillTop("WHITE")
-                .setSlot(48, new ItemCreator(Material.DARK_OAK_BUTTON, 1).setDisplayName("Left").getItemStack()).setSlot(50,
+    public void design(String name, int size, int rows, int buttonOneSlot, int buttonTwoSlot){
+       inv = new InventoryBuilder(name, size, this).fillBottom("WHITE", rows).fillSides("WHITE", size).fillTop("WHITE")
+                .setSlot(buttonOneSlot, new ItemCreator(Material.DARK_OAK_BUTTON, 1).setDisplayName("Left").getItemStack()).setSlot(buttonTwoSlot,
                         new ItemCreator(Material.DARK_OAK_BUTTON, 1).setDisplayName("Right").getItemStack()).build();
     }
 

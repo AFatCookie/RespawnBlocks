@@ -1,5 +1,7 @@
-package me.afatcookie.respawnblocks.respawnblocks;
+package me.afatcookie.respawnblocks.respawnblocks.block;
 
+import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
+import me.afatcookie.respawnblocks.respawnblocks.utils.ItemStackSerializer;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
@@ -72,12 +74,23 @@ public class RespawnBlockManager {
     public void saveRespawnBlocks(){
         instance.getDatabase().clearTable("activeblocks");
         instance.getDatabase().clearTable("idtable");
+        instance.getDatabase().clearTable("rewards");
         if (respawnBlocks.isEmpty()) return;
         for (RespawnBlock respawnBlock : respawnBlocks){
             instance.getDatabase().saveActiveBlocksToTable(respawnBlock);
             instance.getDatabase().saveIDSToTable(respawnBlock);
+            saveRewards(respawnBlock);
         }
 
+    }
+
+    private void saveRewards(RespawnBlock respawnBlock){
+        for (Reward reward : respawnBlock.getRewards()){
+            byte[] serializedItem = ItemStackSerializer.serialize(reward.getItem());
+            if (serializedItem != null){
+                instance.getDatabase().saveRewardsToTable(respawnBlock, ItemStackSerializer.serialize(reward.getItem()));
+            }
+        }
     }
 
     /**
@@ -91,6 +104,9 @@ public class RespawnBlockManager {
         initalBlockID = Collections.max(allIDS) + 1;
         for (int id : allIDS) {
             respawnBlocks.add(instance.getDatabase().getActiveBlocks(id));
+        }
+        for (RespawnBlock respawnBlock : respawnBlocks){
+            respawnBlock.setRewards(instance.getDatabase().getRewardsFromDB(respawnBlock.getBlockID()));
         }
     }
 

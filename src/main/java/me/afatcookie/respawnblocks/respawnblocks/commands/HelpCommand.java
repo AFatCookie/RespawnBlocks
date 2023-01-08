@@ -27,7 +27,7 @@ public class HelpCommand extends CommandBuilder{
         Player player = (Player) commandSender;
         if (args.length > 0) {
             commandSender.sendMessage(ChatColor.GOLD + "+-------------------+");
-            for (CommandBuilder command : CommandListener.getSubCommands()) {
+            for (CommandBuilder command : CommandListener.getCommands()) {
                 commandSender.sendMessage(command.getSyntax() + "-" + command.getDescription());
             }
             commandSender.sendMessage(ChatColor.GOLD + "+-------------------+");

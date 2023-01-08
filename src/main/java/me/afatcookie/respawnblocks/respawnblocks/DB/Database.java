@@ -1,6 +1,10 @@
 package me.afatcookie.respawnblocks.respawnblocks.DB;
-import me.afatcookie.respawnblocks.respawnblocks.RespawnBlock;
+
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
 import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
+import me.afatcookie.respawnblocks.respawnblocks.block.Reward;
+import me.afatcookie.respawnblocks.respawnblocks.utils.ItemStackSerializer;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,18 +37,31 @@ public abstract class Database {
     private final String CREATE_BLOCK_ID_TABLE = "CREATE TABLE IF NOT EXISTS {table_name}(" +
             "idBlock INT NOT NULL" + ");";
 
+    //Creates the reward table, using a blockid as the primary key.
+    private final String CREATE_REWARD_TABLE = "CREATE TABLE IF NOT EXISTS {table_name}(" +
+            "blockID INT  NOT NULL," +
+            "item BLOB NOT NULL" +
+            ");";
+
    //Will put the blockID, x y and z coord, initial material, and the world as a string into the table.
     private final String SAVE_INTO_TABLE = "INSERT OR REPLACE INTO {table_name}(blockID, xcoord, ycoord, zcoord, material, world) VALUES(?,?,?,?,?,?);";
 
     //Will put the blockID into the table.
     private final String SAVE_INTO_ID_TABLE = "INSERT OR REPLACE INTO {table_name}(idBlock) VALUES(?);";
+
+    //Will save rewards into the table
+    private final String SAVE_INTO_REWARDS_TABLE = "INSERT OR REPLACE INTO {table_name}(blockID, item) VALUES(?,?);";
+
     //Lets you completely clear a table
     private final String DELETE = "DELETE FROM {table_name};";
     //This will get the data that corresponds to the blockID.
-    private final String LOAD_DATA = "SELECT * FROM {table_name} WHERE blockID = ?;";
+    private final String LOAD_DATA_FROM_BLOCK_TABLE = "SELECT * FROM {table_name} WHERE blockID = ?;";
 
     //Selects all from the table.
-    private final String LOAD__DATA = "SELECT * FROM {table_name};";
+    private final String LOAD_DATA_FROM_BLOCKID_TABLE = "SELECT * FROM {table_name};";
+
+    //Get all data from rewards table
+    private final String LOAD_DATA_FROM_REWARD_TABLE = "SELECT * FROM {table_name} WHERE blockID = ?;";
 
 
     //DELETES SPECIFIED TABLE
@@ -93,6 +110,23 @@ public abstract class Database {
     }
 
     /**
+     * Creates Reward table
+     */
+    public void createRewardTable(){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try{
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(CREATE_REWARD_TABLE.replace("{table_name}", "rewards"));
+            ps.execute();
+        }catch (SQLException ex){
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        }finally{
+            close(ps, conn);
+        }
+    }
+
+    /**
      * This will save the respawn block to the activeblocks table, using its information provided.
      * @param respawnBlock the respawnBlock to save into the activeblocks table.
      */
@@ -117,7 +151,7 @@ public abstract class Database {
     }
 
     /**
-     * This will save the respawnBlocks' id into idtable
+     * This will save the respawnBlocks id into idtable
      * @param respawnBlock the respawn to get the id of.
      */
     public void saveIDSToTable(RespawnBlock respawnBlock){
@@ -127,6 +161,26 @@ public abstract class Database {
             conn = getSQLConnection();
             ps = conn.prepareStatement(SAVE_INTO_ID_TABLE.replace("{table_name}", "idtable"));
             ps.setInt(1, respawnBlock.getBlockID());
+            ps.execute();
+        }catch (SQLException ex){
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        }finally{
+            close(ps, conn);
+        }
+    }
+
+    /**
+     * Saves the rewards into the table
+     * @param respawnBlock respawnBlock to check
+     */
+    public void saveRewardsToTable(RespawnBlock respawnBlock, byte[] itemStack){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try{
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(SAVE_INTO_REWARDS_TABLE.replace("{table_name}", "rewards"));
+            ps.setInt(1, respawnBlock.getBlockID());
+            ps.setBytes(2, itemStack);
             ps.execute();
         }catch (SQLException ex){
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
@@ -166,7 +220,7 @@ public abstract class Database {
         RespawnBlock rb = null;
         try{
             conn = getSQLConnection();
-            ps = conn.prepareStatement(LOAD_DATA.replace("{table_name}", "activeblocks"));
+            ps = conn.prepareStatement(LOAD_DATA_FROM_BLOCK_TABLE.replace("{table_name}", "activeblocks"));
             ps.setInt(1, blockID);
             ResultSet resultSet = ps.executeQuery();
 
@@ -176,6 +230,7 @@ public abstract class Database {
             }
         }catch (SQLException ex){
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+
         }finally{
             close(ps, conn);
         }
@@ -193,7 +248,7 @@ public abstract class Database {
         ArrayList<Integer> ids = new ArrayList<>();
         try{
             conn = getSQLConnection();
-            ps = conn.prepareStatement(LOAD__DATA.replace("{table_name}", "idtable"));
+            ps = conn.prepareStatement(LOAD_DATA_FROM_BLOCKID_TABLE.replace("{table_name}", "idtable"));
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()){
@@ -201,11 +256,39 @@ public abstract class Database {
             }
         }catch (SQLException ex){
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+
         }finally{
             close(ps, conn);
         }
         return ids;
 }
+
+    /**
+     * This method will get the rewards that match the corresponding id
+     * @param blockID the blockid to check
+     * @return the arraylist of rewards that match the blockID.
+     */
+    public ArrayList<Reward> getRewardsFromDB(int blockID){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ArrayList<Reward> rewardArrayList = new ArrayList<>();
+        try{
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(LOAD_DATA_FROM_REWARD_TABLE.replace("{table_name}", "rewards"));
+            ps.setInt(1, blockID);
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()){
+                rewardArrayList.add(new Reward(blockID, ItemStackSerializer.deserialize(resultSet.getBytes(2))));
+            }
+        }catch (SQLException ex){
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        }finally{
+            close(ps, conn);
+        }
+        return rewardArrayList;
+    }
+
 
     public void close(PreparedStatement ps, Connection cn) {
         try {

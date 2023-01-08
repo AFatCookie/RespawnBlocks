@@ -1,6 +1,6 @@
 package me.afatcookie.respawnblocks.respawnblocks.timing;
 
-import me.afatcookie.respawnblocks.respawnblocks.RespawnBlock;
+import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
 import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
 
 import java.util.ArrayList;
