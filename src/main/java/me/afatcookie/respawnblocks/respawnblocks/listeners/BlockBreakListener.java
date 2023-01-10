@@ -2,11 +2,9 @@ package me.afatcookie.respawnblocks.respawnblocks.listeners;
 
 import me.afatcookie.respawnblocks.respawnblocks.RespawnBlocks;
 import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
-import me.afatcookie.respawnblocks.respawnblocks.block.Reward;
 import me.afatcookie.respawnblocks.respawnblocks.timing.Timer;
 import me.afatcookie.respawnblocks.respawnblocks.utils.ItemCreator;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -56,17 +54,15 @@ public class BlockBreakListener implements Listener {
     }
   }
 
-    private void dropItems(RespawnBlock respawnBlock, Player player, Location location){
+    private void dropItems(RespawnBlock respawnBlock, Player player){
       if (!respawnBlock.getRewards().isEmpty() && respawnBlock.getRewards() != null){
-        for (Reward reward : respawnBlock.getRewards()){
-          player.getWorld().dropItemNaturally(location, reward.getItem());
-        }
+        respawnBlock.dropRewards(player);
       }
     }
 
     private void dropAndDamageItem (Player player, RespawnBlock block, BlockBreakEvent e){
       e.setDropItems(false);
-      dropItems(block, player, block.getBlock().getLocation());
+      dropItems(block, player);
       player.getInventory().setItemInMainHand(new ItemCreator(player.getInventory().getItemInMainHand()).setDurability(1).getItemStack());
     }
   }

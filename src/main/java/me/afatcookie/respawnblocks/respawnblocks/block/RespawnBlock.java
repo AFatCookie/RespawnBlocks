@@ -133,21 +133,26 @@ public class RespawnBlock {
         this.cooldownTime = cooldownTime;
     }
     /**
-     * Loads the block's settings from the configuration file.
+     * Loads settings from a configuration file and saves default values if necessary.
      *
-     * @param path the path to the block's configuration section in the file
+     * @param path the path to the configuration section to load from
      */
     private void loadSettingsFromConfig(String path) {
+        // Get the configuration section at the specified path
         ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(path);
+
+        // If the section does not exist, create it
         if (section == null) {
             section = instance.getDataConfig().getConfig().createSection(path, new HashMap<>());
         }
 
+        // Load the cooldown time setting from the configuration file, or use the default value if not present
         this.cooldownTime = Objects.requireNonNullElse(
                 section.getInt("cooldown-time"),
                 instance.getDataConfig().getDefaultCooldown()
         );
 
+        // Load the cooldown material setting from the configuration file, or use the default value if not present
         this.cooldownMaterial = Material.getMaterial(
                 Objects.requireNonNullElse(
                         section.getString("cooldown-block-material"),
@@ -155,11 +160,14 @@ public class RespawnBlock {
                 )
         );
 
+        // Set default values for the configuration section
         section.addDefault("cooldown-time", instance.getDataConfig().getDefaultCooldown());
         section.addDefault("cooldown-block-material", instance.getDataConfig().getDefaultCooldownMaterial().toString());
 
+        // Save the configuration file
         instance.getDataConfig().save();
     }
+
 
     private void loadRewards(){
         rewards = new ArrayList<>();

@@ -69,33 +69,46 @@ public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
         }
     }
 
-    private List<Block> getBlocks(Location pos1, Location pos2){
-        if(pos1.getWorld() != pos2.getWorld()) return null;
+
+    /**
+     * Returns a list of blocks within a specified bounding box.
+     *
+     * @param pos1 the first corner of the bounding box
+     * @param pos2 the second corner of the bounding box
+     * @return a list of blocks within the bounding box, or null if the positions are in different worlds
+     */
+    private List<Block> getBlocks(Location pos1, Location pos2) {
+        // Return null if the positions are in different worlds
+        if (pos1.getWorld() != pos2.getWorld()) return null;
+
         World world = pos1.getWorld();
         List<Block> blocks = new ArrayList<>();
+
+        // Get the coordinates of the positions
         int x1 = pos1.getBlockX();
         int y1 = pos1.getBlockY();
         int z1 = pos1.getBlockZ();
-
         int x2 = pos2.getBlockX();
         int y2 = pos2.getBlockY();
         int z2 = pos2.getBlockZ();
 
+        // Find the lowest and highest coordinates
         int lowestX = Math.min(x1, x2);
         int lowestY = Math.min(y1,y2);
         int lowestZ = Math.min(z1, z2);
-
         int highestX = lowestX == x1 ? x2 : x1;
         int highestY = lowestY == y1 ? y2 : y1;
         int highestZ = lowestZ == z1 ? z2 : z1;
 
-        for (int x = lowestX; x <= highestX; x++){
-            for (int y= lowestY; y <= highestY; y++){
-                for (int z = lowestZ; z <= highestZ; z++){
+        // Iterate through all blocks within the bounding box
+        for (int x = lowestX; x <= highestX; x++) {
+            for (int y = lowestY; y <= highestY; y++) {
+                for (int z = lowestZ; z <= highestZ; z++) {
                     blocks.add(world.getBlockAt(x,y,z));
                 }
             }
         }
         return blocks;
     }
+
 }
