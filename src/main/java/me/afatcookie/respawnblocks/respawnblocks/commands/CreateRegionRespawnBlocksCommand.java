@@ -32,42 +32,52 @@ public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        if (!(commandSender instanceof Player)) return;
+        // Check if the command sender is a player
+        if (!(commandSender instanceof Player)) {
+            return;
+        }
         Player player = (Player) commandSender;
+        // Check if any arguments were passed to the command
         if (args.length > 0) {
-            if (instance.getRBManager().getBlock1() == null || instance.getRBManager().getBlock2() == null){
+            // check if the block1 and block2 are not null
+            if (instance.getRBManager().getBlock1() == null || instance.getRBManager().getBlock2() == null) {
                 commandSender.sendMessage(ChatColor.RED + "Please reset your positions, one of them are null!");
                 return;
             }
+            //get all blocks between two points
             List<Block> blocks = getBlocks(instance.getRBManager().getBlock1().getLocation(), instance.getRBManager().getBlock2().getLocation());
-            if (blocks == null || blocks.isEmpty()){
+            if (blocks == null || blocks.isEmpty()) {
                 player.sendMessage(ChatColor.RED + "Failed to create RespawnBlocks within the two points provided.");
                 return;
             }
-      for (Block block : blocks) {
-        if (instance.getRBManager().getRespawnBlock(block) == null) {
-            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString()) == null){
-                instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString(), new HashMap<>());
-                ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString());
-                if (section != null) {
-                    MemorySection.createPath(section, "cooldown-time");
-                    MemorySection.createPath(section, "cooldown-block-material");
-                    section.set("cooldown-time", 10);
-                    section.set("cooldown-block-material", "COBBLESTONE");
+            for (Block block : blocks) {
+                // check if the block is not already a respawn block
+                if (instance.getRBManager().getRespawnBlock(block) == null) {
+                    // check if the block is already in the config
+                    if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString()) == null) {
+                        instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString(), new HashMap<>());
+                        ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString());
+                        if (section != null) {
+                            MemorySection.createPath(section, "cooldown-time");
+                            MemorySection.createPath(section, "cooldown-block-material");
+                            section.set("cooldown-time", 10);
+                            section.set("cooldown-block-material", "COBBLESTONE");
+                        }
+                        instance.getDataConfig().save();
+                    }
+                    //create new respawn block
+                    RespawnBlock respawnBlock =
+                            new RespawnBlock(
+                                    block.getLocation(),
+                                    instance,
+                                    block.getType().toString(),
+                                    block.getWorld().getName());
+                    instance.getRBManager().getRespawnBlocksList().add(respawnBlock);
                 }
-                instance.getDataConfig().save();
             }
-          RespawnBlock respawnBlock =
-              new RespawnBlock(
-                      block.getLocation(),
-                  instance,
-                  block.getType().toString(),
-                  block.getWorld().getName());
-          instance.getRBManager().getRespawnBlocksList().add(respawnBlock);
-        }
-}
         }
     }
+
 
 
     /**

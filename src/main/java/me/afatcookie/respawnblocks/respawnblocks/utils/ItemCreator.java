@@ -440,6 +440,7 @@ public class ItemCreator {
         }else{
             lore = new ArrayList<>();
             lore.add(colorizeMessage(replacement));
+
             return this;
         }
         for (String line : lore){

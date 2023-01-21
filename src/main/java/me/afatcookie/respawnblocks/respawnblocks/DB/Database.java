@@ -40,7 +40,8 @@ public abstract class Database {
     //Creates the reward table, using a blockid as the primary key.
     private final String CREATE_REWARD_TABLE = "CREATE TABLE IF NOT EXISTS {table_name}(" +
             "blockID INT  NOT NULL," +
-            "item BLOB NOT NULL" +
+            "item BLOB NOT NULL," +
+            "weight INT  NOT NULL" +
             ");";
 
    //Will put the blockID, x y and z coord, initial material, and the world as a string into the table.
@@ -50,7 +51,7 @@ public abstract class Database {
     private final String SAVE_INTO_ID_TABLE = "INSERT OR REPLACE INTO {table_name}(idBlock) VALUES(?);";
 
     //Will save rewards into the table
-    private final String SAVE_INTO_REWARDS_TABLE = "INSERT OR REPLACE INTO {table_name}(blockID, item) VALUES(?,?);";
+    private final String SAVE_INTO_REWARDS_TABLE = "INSERT OR REPLACE INTO {table_name}(blockID, item, weight) VALUES(?,?,?);";
 
     //Lets you completely clear a table
     private final String DELETE = "DELETE FROM {table_name};";
@@ -173,7 +174,7 @@ public abstract class Database {
      * Saves the rewards into the table
      * @param respawnBlock respawnBlock to check
      */
-    public void saveRewardsToTable(RespawnBlock respawnBlock, byte[] itemStack){
+    public void saveRewardsToTable(RespawnBlock respawnBlock, byte[] itemStack, int weight){
         Connection conn = null;
         PreparedStatement ps = null;
         try{
@@ -181,6 +182,7 @@ public abstract class Database {
             ps = conn.prepareStatement(SAVE_INTO_REWARDS_TABLE.replace("{table_name}", "rewards"));
             ps.setInt(1, respawnBlock.getBlockID());
             ps.setBytes(2, itemStack);
+            ps.setInt(3, weight);
             ps.execute();
         }catch (SQLException ex){
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
@@ -279,7 +281,7 @@ public abstract class Database {
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()){
-                rewardArrayList.add(new Reward(blockID, ItemStackSerializer.deserialize(resultSet.getBytes(2))));
+                rewardArrayList.add(new Reward(blockID, ItemStackSerializer.deserialize(resultSet.getBytes(2)), resultSet.getInt(3)));
             }
         }catch (SQLException ex){
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);

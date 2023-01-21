@@ -32,24 +32,33 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        if (!(commandSender instanceof  Player)) return;
+        // Check if the command sender is a player
+        if (!(commandSender instanceof Player)) {
+            return;
+        }
         Player player = (Player) commandSender;
+        // Check if any arguments were passed to the command
         if (args.length > 0) {
-          Block targetBlock = player.getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
-          if (targetBlock == null){
-              player.sendMessage(ChatColor.RED + "Failed to create a respawn block.");
-              return;
-          }
-          if (instance.getRBManager().getRespawnBlock(targetBlock) != null){
-              player.sendMessage(ChatColor.RED + "This block is already a respawn block!");
-              return;
-          }
-          if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection()) == null){
-              player.sendMessage(ChatColor.RED + "a section is missing from the config, please delete the data.yml file, and then reload the plugin fully.");
-              player.sendMessage(ChatColor.RED + "or, try and create a configuration section named: " + " respawnblocks ");
-              return;
-          }
-            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString()) == null){
+            // Get the targeted block within a range of 5 blocks, ignoring fluid collision
+            Block targetBlock = player.getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+            // check if the block is not null
+            if (targetBlock == null) {
+                player.sendMessage(ChatColor.RED + "Failed to create a respawn block.");
+                return;
+            }
+            // check if the block is already a respawn block
+            if (instance.getRBManager().getRespawnBlock(targetBlock) != null) {
+                player.sendMessage(ChatColor.RED + "This block is already a respawn block!");
+                return;
+            }
+            // check if the respawn block section is missing from the config
+            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection()) == null) {
+                player.sendMessage(ChatColor.RED + "a section is missing from the config, please delete the data.yml file, and then reload the plugin fully.");
+                player.sendMessage(ChatColor.RED + "or, try and create a configuration section named: " + " respawnblocks ");
+                return;
+            }
+            // check if the block type is not already in the config
+            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString()) == null) {
                 instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), new HashMap<>());
                 ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString());
                 if (section != null) {
@@ -60,13 +69,16 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
                 }
                 instance.getDataConfig().save();
             }
-      RespawnBlock respawnBlock =
-          new RespawnBlock(
-                  targetBlock.getLocation(),
-              instance, targetBlock.getType().toString(),
-              targetBlock.getWorld().getName());
-          instance.getRBManager().getRespawnBlocksList().add(respawnBlock);
-          player.sendMessage(ChatColor.GREEN + "Successfully created a respawn block!");
+            //create new respawn block
+            RespawnBlock respawnBlock =
+                    new RespawnBlock(
+                            targetBlock.getLocation(),
+                            instance,
+                            targetBlock.getType().toString(),
+                            targetBlock.getWorld().getName());
+            instance.getRBManager().getRespawnBlocksList().add(respawnBlock);
+            player.sendMessage(ChatColor.GREEN + "Successfully created a respawn block!");
         }
     }
+
 }

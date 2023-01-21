@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 
 import java.util.HashMap;
 
@@ -42,32 +43,7 @@ public class ReloadConfigCommand extends CommandBuilder{
                     }
 
                     initRBFields(rb, instance.getDataConfig());
-                    /**
-                    String configPath = instance.getDataConfig().getRBSection() + "." + rb.getInitialBlockType().toString();
-                        if (instance.getDataConfig().getConfig().getConfigurationSection(configPath) == null) {
-                            instance.getDataConfig().getConfig().createSection(configPath, new HashMap<>());
-                        }
-                            ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(configPath);
-                    if (section != null) {
-                                if (instance.getDataConfig().getConfig().get(configPath + "." + "cooldown-time") == null) {
-                                    MemorySection.createPath(section, "cooldown-time");
-                                    section.set("cooldown-time", instance.getDataConfig().getDefaultCooldown());
-                                    rb.setCooldownTime(instance.getDataConfig().getDefaultCooldown());
-                                }else{
-                                    rb.setCooldownTime(instance.getDataConfig().getConfig().getInt(configPath + "." + "cooldown-time"));
-                                }
-                                if (instance.getDataConfig().getConfig().getString(configPath + "." + "cooldown-block-material") == null) {
-                                    MemorySection.createPath(section, "cooldown-block-material");
-                                    section.set("cooldown-block-material", instance.getDataConfig().getDefaultCooldownMaterial().toString());
-                                    rb.setCooldownMaterial(instance.getDataConfig().getDefaultCooldownMaterial());
-                                }else{
-                                    rb.setCooldownMaterial(Material.getMaterial(instance.getDataConfig().getConfig().getString(configPath + "." + "cooldown-block-material")));
-                                }
-                            }
-                            instance.getDataConfig().save();
-                     */
                 }
-
 
                 if (instance.getDataConfig().getConfig().getConfigurationSection("respawnblocks") != null){
                     ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection("respawnblocks");
@@ -109,12 +85,21 @@ public class ReloadConfigCommand extends CommandBuilder{
         ConfigurationSection section = dataConfig.getConfig().getConfigurationSection(configPath);
         if (section != null) {
             // Set the cooldown time for the RBObject
+
             int cooldownTime = dataConfig.getConfig().getInt(configPath + "." + "cooldown-time", dataConfig.getDefaultCooldown());
             rb.setCooldownTime(cooldownTime);
+            if (!dataConfig.getConfig().contains(configPath + "." + "cooldown-time")){
+                MemorySection.createPath(section, "cooldown-time");
+                section.set("cooldown-time", 10);
+            }
 
             // Set the cooldown material for the RBObject
             Material cooldownMaterial = Material.getMaterial(dataConfig.getConfig().getString(configPath + "." + "cooldown-block-material", dataConfig.getDefaultCooldownMaterial().toString()));
             rb.setCooldownMaterial(cooldownMaterial);
+            if (!dataConfig.getConfig().contains(configPath + "." + "cooldown-block-material")){
+                MemorySection.createPath(section, "cooldown-block-material");
+                section.set("cooldown-block-material", "COBBLESTONE");
+            }
         }
 
         // Save the configuration file

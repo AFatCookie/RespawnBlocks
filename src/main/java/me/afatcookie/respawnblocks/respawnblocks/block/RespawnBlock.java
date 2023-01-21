@@ -170,22 +170,26 @@ public class RespawnBlock {
 
 
     private void loadRewards(){
+        if (rewards != null) return;
         rewards = new ArrayList<>();
         if (block.getDrops().stream().findFirst().isPresent()){
-            rewards.add(new Reward(blockID, block.getDrops().stream().findFirst().get()));
+            rewards.add(new Reward(blockID, block.getDrops().stream().findFirst().get(), 50));
         }else{
-            rewards.add(new Reward(blockID, new ItemStack(block.getType(), 1)));
+            rewards.add(new Reward(blockID, new ItemStack(block.getType(), 1), 50));
         }
         }
 
-    public void dropRewards(Player player){
-        for (Reward reward: rewards) {
-            player.getWorld().dropItemNaturally(block.getLocation(), reward.getItem());
+    public void dropRewards(RespawnBlock block, Player player){
+        ItemStack itemStack = new WeightManager(block).getWeightedReward().getItem();
+        if (itemStack.getType() == Material.AIR){
+            player.getWorld().dropItemNaturally(block.getBlock().getLocation(), new ItemStack(block.getInitialBlockType(),1));
+            return;
         }
+        player.getWorld().dropItemNaturally(block.getBlock().getLocation(), itemStack);
     }
 
-    public void addToRewards(ItemStack itemStack){
-        rewards.add(new Reward(blockID, itemStack));
+    public void addToRewards(ItemStack itemStack, int weight){
+        rewards.add(new Reward(blockID, itemStack, weight));
     }
 
     public void setRewards(ArrayList<Reward> rewards) {

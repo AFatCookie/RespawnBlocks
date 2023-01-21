@@ -58,6 +58,7 @@ public class BlockRewardsGUI extends PaginatedMenu{
                 // If this is the last page, do nothing
                 else {
                     player.sendMessage("Last page, cannot go farther");
+                    return;
                 }
             }
         }
@@ -96,8 +97,10 @@ public class BlockRewardsGUI extends PaginatedMenu{
                     break;
                 }
                 if (rewards.get(index) != null) {
-                    inv.setItem(inv.firstEmpty(), new ItemCreator(rewards.get(index).getItem()).setLore("Click this to remove it " +
-                            "from this blocks rewards!").getItemStack());
+                    ItemStack inventoryItem =  new ItemCreator(rewards.get(index).getItem()).
+                            setLore("&2Click this to remove it from this blocks rewards!",
+                            "&bItem Weight: " + rewards.get(index).getWeight()).getItemStack();
+                    inv.setItem(inv.firstEmpty(), inventoryItem);
                 }
             }
         }

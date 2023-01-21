@@ -65,6 +65,7 @@ public final class RespawnBlocks extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new ClickListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionEvent(this), this);
+        getServer().getPluginManager().registerEvents(new GrassGrowListener(this), this);
     }
 
     public  DataConfig getDataConfig() {

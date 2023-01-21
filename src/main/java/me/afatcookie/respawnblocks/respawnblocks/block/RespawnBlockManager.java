@@ -88,7 +88,7 @@ public class RespawnBlockManager {
         for (Reward reward : respawnBlock.getRewards()){
             byte[] serializedItem = ItemStackSerializer.serialize(reward.getItem());
             if (serializedItem != null){
-                instance.getDatabase().saveRewardsToTable(respawnBlock, ItemStackSerializer.serialize(reward.getItem()));
+                instance.getDatabase().saveRewardsToTable(respawnBlock, ItemStackSerializer.serialize(reward.getItem()), reward.getWeight());
             }
         }
     }

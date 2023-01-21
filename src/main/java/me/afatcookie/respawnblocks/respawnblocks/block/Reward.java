@@ -9,10 +9,13 @@ public class Reward {
 
     private  ItemStack item;
 
+    private int weight;
 
-    public Reward(int blockID, ItemStack item) {
+
+    public Reward(int blockID, ItemStack item, int weight) {
         this.blockID = blockID;
         this.item = item;
+        this.weight = weight;
     }
 
     public int getBlockID() {
@@ -32,4 +35,11 @@ public class Reward {
         this.item = item;
     }
 
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 }

@@ -83,7 +83,7 @@ public class BlockManagementGUI implements GUI {
                 .setSlot(31, new ItemCreator(Material.ENDER_PEARL, 1).setDisplayName("&3Teleport to Block").setLore("&7Teleport to this Block!",
                         "&6NOTE",
                         "&7If there is no open space around the block", "&7where the block is visible",
-                        "&7it will not teleport you!").getItemStack()).setSlot(32, new ItemCreator(
+                        "&7it will force teleport you to the exact block location!", "(Potential for Suffocation, Drowning etc...)").getItemStack()).setSlot(32, new ItemCreator(
                                 Material.BARRIER, 1
                 ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).setSlot(33,
                         new ItemCreator(Material.BOOK, 1).setDisplayName("&5Rewards").setLore("See the rewards this block drops").getItemStack()).build();
@@ -115,6 +115,8 @@ public class BlockManagementGUI implements GUI {
             }
         }
         player.sendMessage(ChatColor.RED + "Unable to find safe teleport next to block.");
+        player.sendMessage(ChatColor.RED + "Force teleporting you to the block!");
+        player.teleport(start.getLocation());
         player.closeInventory();
     }
 
