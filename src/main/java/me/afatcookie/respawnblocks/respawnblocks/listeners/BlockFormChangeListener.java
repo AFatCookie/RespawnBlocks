@@ -9,11 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFormEvent;
 
-public class GrassGrowListener implements Listener {
+public class BlockFormChangeListener implements Listener {
 
     private final RespawnBlockManager rm;
 
-     public GrassGrowListener(RespawnBlocks instance){
+     public BlockFormChangeListener(RespawnBlocks instance){
         rm = instance.getRBManager();
     }
 

@@ -1,6 +1,7 @@
 package me.afatcookie.respawnblocks.respawnblocks.commands;
 
 import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +32,7 @@ public class ClearAllBlocksCommand extends CommandBuilder{
         }
             }
       instance.getRBManager().clearBlocks();
-      commandSender.sendMessage("Cleared all active RespawnBlocks!");
+      commandSender.sendMessage(ChatColor.GREEN + "Cleared all active RespawnBlocks!");
         }
     }
 }

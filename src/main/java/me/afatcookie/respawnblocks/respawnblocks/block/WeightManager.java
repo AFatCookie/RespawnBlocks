@@ -48,7 +48,7 @@ public class WeightManager {
                 return entry.getKey(); // return the reward if the random number is less than or equal to 0
             }
         }
-        return null; // if no reward is selected, return null
+        return  new Reward(respawnBlock.getBlockID(), new ItemStack(respawnBlock.getInitialBlockType(), 1), 50); // if no reward is selected, return its self
     }
 
 }

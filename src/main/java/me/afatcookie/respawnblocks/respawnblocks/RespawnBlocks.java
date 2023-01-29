@@ -28,11 +28,11 @@ public final class RespawnBlocks extends JavaPlugin {
         instance = this;
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+        dataConfig = new DataConfig(instance);
         database = new SQLite(instance);
         database.createBlockIDTable();
         database.createActiveBlocksTable();
         database.createRewardTable();
-        dataConfig = new DataConfig(instance);
         rbManager = new RespawnBlockManager(instance);
         tm = new TimerManager(instance);
         rbManager.retrieveRespawnBlocks();
@@ -65,7 +65,7 @@ public final class RespawnBlocks extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new ClickListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionEvent(this), this);
-        getServer().getPluginManager().registerEvents(new GrassGrowListener(this), this);
+        getServer().getPluginManager().registerEvents(new BlockFormChangeListener(this), this);
     }
 
     public  DataConfig getDataConfig() {

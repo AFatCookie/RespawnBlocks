@@ -51,11 +51,8 @@ public class RespawnBlockRemoveCommand extends CommandBuilder {
       // remove the block from the respawn block list
       instance.getRBManager().getRespawnBlocksList().remove(instance.getRBManager().getRespawnBlock(targetBlock));
       // check if the block type is in the config and remove it
-      if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString()) != null) {
-        instance.getDataConfig().getConfig().set(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), null);
-        instance.getDataConfig().save();
-      }
-      player.sendMessage("&aSuccessfully removed RespawnBlock!");
+      instance.getDataConfig().removeBlockFromConfig(targetBlock.getType());
+      player.sendMessage( ChatColor.GREEN + "Successfully removed RespawnBlock!");
     }
   }
 }

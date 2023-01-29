@@ -6,12 +6,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
@@ -54,17 +51,7 @@ public class CreateRegionRespawnBlocksCommand extends CommandBuilder{
                 // check if the block is not already a respawn block
                 if (instance.getRBManager().getRespawnBlock(block) == null) {
                     // check if the block is already in the config
-                    if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString()) == null) {
-                        instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString(), new HashMap<>());
-                        ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + block.getType().toString());
-                        if (section != null) {
-                            MemorySection.createPath(section, "cooldown-time");
-                            MemorySection.createPath(section, "cooldown-block-material");
-                            section.set("cooldown-time", 10);
-                            section.set("cooldown-block-material", "COBBLESTONE");
-                        }
-                        instance.getDataConfig().save();
-                    }
+                    instance.getDataConfig().addCDInfoToConfig(block.getType());
                     //create new respawn block
                     RespawnBlock respawnBlock =
                             new RespawnBlock(

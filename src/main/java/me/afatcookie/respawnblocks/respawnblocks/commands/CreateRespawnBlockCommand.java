@@ -5,11 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
-
-import java.util.HashMap;
 
 /**
  * Creates a respawnableBlock, when looking at it within 5 blocks
@@ -52,23 +48,14 @@ public class CreateRespawnBlockCommand extends CommandBuilder{
                 return;
             }
             // check if the respawn block section is missing from the config
-            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection()) == null) {
-                player.sendMessage(ChatColor.RED + "a section is missing from the config, please delete the data.yml file, and then reload the plugin fully.");
-                player.sendMessage(ChatColor.RED + "or, try and create a configuration section named: " + " respawnblocks ");
+            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSectionName()) == null) {
+                player.sendMessage(ChatColor.RED + "please run the command /rb clearall to get back the section. Note: this will clear configuration for all blocks!");
+                player.sendMessage(ChatColor.RED + "or, try and create a configuration section named: " + " respawnblocks: " + " in the data config.");
+                player.sendMessage(ChatColor.RED + "Or contact AFatCookie#4011 on Discord for futher assistance");
                 return;
             }
             // check if the block type is not already in the config
-            if (instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString()) == null) {
-                instance.getDataConfig().getConfig().createSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString(), new HashMap<>());
-                ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(instance.getDataConfig().getRBSection() + "." + targetBlock.getType().toString());
-                if (section != null) {
-                    MemorySection.createPath(section, "cooldown-time");
-                    MemorySection.createPath(section, "cooldown-block-material");
-                    section.set("cooldown-time", 10);
-                    section.set("cooldown-block-material", "COBBLESTONE");
-                }
-                instance.getDataConfig().save();
-            }
+            instance.getDataConfig().addCDInfoToConfig(targetBlock.getType());
             //create new respawn block
             RespawnBlock respawnBlock =
                     new RespawnBlock(

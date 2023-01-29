@@ -3,6 +3,7 @@ package me.afatcookie.respawnblocks.respawnblocks.commands;
 import me.afatcookie.respawnblocks.respawnblocks.block.RespawnBlock;
 import me.afatcookie.respawnblocks.respawnblocks.guis.BlockManagementGUI;
 import me.afatcookie.respawnblocks.respawnblocks.utils.ItemCreator;
+import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,13 +44,12 @@ public class CheckBlockCommand extends CommandBuilder {
             // Check if the targeted block is not a valid respawn block
             if (targetBlock == null || instance.getRBManager().getRespawnBlock(targetBlock) == null || targetBlock.getType() == Material.AIR) {
                 // If not, send a message to the player and return
-                player.sendMessage("This is not a respawnBlock.");
+                player.sendMessage(ChatColor.RED + "This is not a respawnBlock.");
                 return;
             }
 
             // Get the respawn block associated with the targeted block
             RespawnBlock respawnBlock = instance.getRBManager().getRespawnBlock(targetBlock);
-
             // Create a new inventory using the BlockManagementGUI class and open it for the player
             player.openInventory(new BlockManagementGUI(
                     new ItemCreator(respawnBlock.getInitialBlockType(), 1)

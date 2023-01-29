@@ -6,13 +6,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 /*
 This class just creates a respawnable Block, so I can manage them through the code
@@ -21,22 +18,17 @@ public class RespawnBlock {
 
     RespawnBlocks instance;
     private final int x;
-
     private final int y;
-
     private final int z;
+    private final int blockID;
+    private int cooldownTime;
     //the block it should turn in to, when its "regenerating"
     private Material cooldownMaterial;
 
-    private final int blockID;
     private final Block block;
-
-    private int cooldownTime;
-
     private final World world;
     //the block's initial material before changing
     private  String initialBlockMaterial;
-
     private  ArrayList<Reward> rewards;
 
 
@@ -55,7 +47,7 @@ public class RespawnBlock {
         this.world = Bukkit.getWorld(world);
         block = this.world.getBlockAt(x,y,z);
         initialBlockMaterial = initalMaterial;
-        loadSettingsFromConfig(instance.getDataConfig().getRBSection() + "." + this.initialBlockMaterial);
+        loadSettingsFromConfig();
         this.blockID = respawnBlocksInstance.getRBManager().getInitalBlockID();
         loadRewards();
         instance.getRBManager().setInitalBlockID(instance.getRBManager().getInitalBlockID() + 1);
@@ -80,9 +72,43 @@ public class RespawnBlock {
         this.world = Bukkit.getWorld(world);
         this.block = this.world.getBlockAt(xCoord, yCoord, zCoord);
         this.initialBlockMaterial = initialBlockMaterial;
-        loadSettingsFromConfig(instance.getDataConfig().getRBSection() + "." + this.initialBlockMaterial);
+        loadSettingsFromConfig();
         loadRewards();
         instance.getRBManager().setInitalBlockID(instance.getRBManager().getInitalBlockID() + 1);
+    }
+    private void loadSettingsFromConfig() {
+        this.cooldownTime = instance.getDataConfig().getBlockTime(getInitialBlockType());
+        this.cooldownMaterial = instance.getDataConfig().getBlockCDMaterial(getInitialBlockType());
+
+        // Save the configuration file
+        instance.getDataConfig().save();
+    }
+
+
+    private void loadRewards(){
+        if (rewards != null) return;
+        rewards = new ArrayList<>();
+        //Attempts to add a new reward based on the blocks first drop, and if the block drops nothing, it'll drop itself. both will have a weight of 50.
+        rewards.add(new Reward(blockID, block.getDrops().stream().findFirst().orElse(new ItemStack(block.getType(), 1)), 50));
+
+    }
+
+    public void dropRewards(RespawnBlock block, Player player){
+// Get the weighted item reward from the block
+        ItemStack itemStack = new WeightManager(block).getWeightedReward().getItem();
+
+// If the item is air, drop the initial block type instead
+        if (itemStack.getType() == Material.AIR) {
+            player.getWorld().dropItemNaturally(block.getBlock().getLocation(), new ItemStack(block.getInitialBlockType(),1));
+            return;
+        }
+// Otherwise, drop the weighted reward item
+        player.getWorld().dropItemNaturally(block.getBlock().getLocation(), itemStack);
+
+    }
+
+    public void addToRewards(ItemStack itemStack, int weight){
+        rewards.add(new Reward(blockID, itemStack, weight));
     }
 
     public int getX() {
@@ -99,11 +125,6 @@ public class RespawnBlock {
     public Material getCooldownMaterial() {
         return cooldownMaterial;
     }
-
-    public void setCooldownMaterial(Material material){
-        cooldownMaterial = material;
-    }
-
     public Material getInitialBlockType(){
         return Material.getMaterial(initialBlockMaterial);
     }
@@ -121,82 +142,28 @@ public class RespawnBlock {
         return world;
     }
 
+    public int getCooldownTime() {
+        return cooldownTime;
+    }
+    public ArrayList<Reward> getRewards() {
+        return rewards;
+    }
+
     public void setInitialBlockMaterial(Material initialBlockMaterial) {
         this.initialBlockMaterial = initialBlockMaterial.toString();
     }
 
-    public int getCooldownTime() {
-        return cooldownTime;
+    public void setCooldownMaterial(Material material){
+        cooldownMaterial = material;
     }
+
 
     public void setCooldownTime(int cooldownTime) {
         this.cooldownTime = cooldownTime;
-    }
-    /**
-     * Loads settings from a configuration file and saves default values if necessary.
-     *
-     * @param path the path to the configuration section to load from
-     */
-    private void loadSettingsFromConfig(String path) {
-        // Get the configuration section at the specified path
-        ConfigurationSection section = instance.getDataConfig().getConfig().getConfigurationSection(path);
-
-        // If the section does not exist, create it
-        if (section == null) {
-            section = instance.getDataConfig().getConfig().createSection(path, new HashMap<>());
-        }
-
-        // Load the cooldown time setting from the configuration file, or use the default value if not present
-        this.cooldownTime = Objects.requireNonNullElse(
-                section.getInt("cooldown-time"),
-                instance.getDataConfig().getDefaultCooldown()
-        );
-
-        // Load the cooldown material setting from the configuration file, or use the default value if not present
-        this.cooldownMaterial = Material.getMaterial(
-                Objects.requireNonNullElse(
-                        section.getString("cooldown-block-material"),
-                        instance.getDataConfig().getDefaultCooldownMaterial().toString()
-                )
-        );
-
-        // Set default values for the configuration section
-        section.addDefault("cooldown-time", instance.getDataConfig().getDefaultCooldown());
-        section.addDefault("cooldown-block-material", instance.getDataConfig().getDefaultCooldownMaterial().toString());
-
-        // Save the configuration file
-        instance.getDataConfig().save();
-    }
-
-
-    private void loadRewards(){
-        if (rewards != null) return;
-        rewards = new ArrayList<>();
-        if (block.getDrops().stream().findFirst().isPresent()){
-            rewards.add(new Reward(blockID, block.getDrops().stream().findFirst().get(), 50));
-        }else{
-            rewards.add(new Reward(blockID, new ItemStack(block.getType(), 1), 50));
-        }
-        }
-
-    public void dropRewards(RespawnBlock block, Player player){
-        ItemStack itemStack = new WeightManager(block).getWeightedReward().getItem();
-        if (itemStack.getType() == Material.AIR){
-            player.getWorld().dropItemNaturally(block.getBlock().getLocation(), new ItemStack(block.getInitialBlockType(),1));
-            return;
-        }
-        player.getWorld().dropItemNaturally(block.getBlock().getLocation(), itemStack);
-    }
-
-    public void addToRewards(ItemStack itemStack, int weight){
-        rewards.add(new Reward(blockID, itemStack, weight));
     }
 
     public void setRewards(ArrayList<Reward> rewards) {
         this.rewards = rewards;
     }
 
-    public ArrayList<Reward> getRewards() {
-        return rewards;
-    }
 }

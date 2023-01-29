@@ -77,7 +77,8 @@ public class RbBlocksDisplayGUI extends PaginatedMenu {
                     break;
                 }
                 if (blocks.get(index) != null) {
-                    inv.setItem(inv.firstEmpty(), new ItemCreator(blocks.get(index).getInitialBlockType(), 1)
+                    inv.setItem(inv.firstEmpty(), new ItemCreator(blocks.get(index).getInitialBlockType(), 1).setDisplayName("Block Id: " +
+                                    blocks.get(index).getBlockID())
                             .addGlow(true).addLoreLine(ChatColor.GOLD + "Click to open this block's menu")
                             .setPDCInteger(new NamespacedKey(instance, "xcoord"), blocks.get(index).getX())
                             .setPDCInteger(new NamespacedKey(instance, "ycoord"), blocks.get(index).getY())

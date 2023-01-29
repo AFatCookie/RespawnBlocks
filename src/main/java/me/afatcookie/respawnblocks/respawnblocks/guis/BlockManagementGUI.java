@@ -48,15 +48,18 @@ public class BlockManagementGUI implements GUI {
             if (!cursor.getType().isBlock() || cursor.getType() == Material.AIR){
                 player.sendMessage("This item cannot be a block!");
       } else {
-                for (Reward reward : block.getRewards()){
-                    if (reward.getItem().getType() == block.getBlock().getType()){
+                for (Reward reward : block.getRewards()) {
+                    if (reward.getItem().getType() == block.getBlock().getType()) {
                         reward.setItem(new ItemStack(cursor.getType(), 1));
                         break;
                     }
                 }
+                player.sendMessage(ChatColor.GOLD + "Changed this block type to:" + ChatColor.WHITE + " " + ChatColor.BOLD + cursor.getType());
+                instance.getDataConfig().removeBlockFromConfig(clickedItem.getType());
+                instance.getDataConfig().addCDInfoToConfig(cursor.getType());
                 block.setInitialBlockMaterial(cursor.getType());
                 block.getBlock().setType(cursor.getType());
-                player.sendMessage(ChatColor.GOLD + "Changed this block type to:" + ChatColor.WHITE + " " + ChatColor.BOLD + cursor.getType());
+
         player.closeInventory();
             }
         }
@@ -85,7 +88,7 @@ public class BlockManagementGUI implements GUI {
                         "&7If there is no open space around the block", "&7where the block is visible",
                         "&7it will force teleport you to the exact block location!", "(Potential for Suffocation, Drowning etc...)").getItemStack()).setSlot(32, new ItemCreator(
                                 Material.BARRIER, 1
-                ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).setSlot(33,
+                ).setDisplayName("&cRemove Block").setLore("&7Stop this block from respawning.").getItemStack()).setSlot(40,
                         new ItemCreator(Material.BOOK, 1).setDisplayName("&5Rewards").setLore("See the rewards this block drops").getItemStack()).build();
         return inventory;
     }
